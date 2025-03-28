@@ -18,7 +18,12 @@ export const data = [
 const Cart = () => {
     const [selectData, setSelectData] = useState([]);
     const [isAllSelected, setIsAllSelected] = useState(false);
-    const [searchData, setSearchData] = useState("");
+    const [cardData, setCardData] = useState(data);
+
+    const handleSearch = (value) => {
+        const searchedFilteredData = data.filter((ele) => ele.name.toLowerCase().includes(value.toLowerCase()))
+        setCardData(searchedFilteredData)
+    }
 
     const selectAll = () => {
         if (selectData.length === data.length) {
@@ -37,6 +42,12 @@ const Cart = () => {
         }
     }
 
+    //handleDeletebutton
+    const handleDelete = () => {
+        const updatedData = cardData.filter((ele) => !selectData.includes(ele.id))
+        setCardData(updatedData);
+    }
+
     useEffect(() => {
         if (selectData.length === data.length) {
             setIsAllSelected(true);
@@ -44,13 +55,6 @@ const Cart = () => {
             setIsAllSelected(false);
         }
     }, [selectData]);
-
-    const handleSearch = (id) => {
-        const filteredSearchData = data.filter((id) =>
-            id.name.toLowerCase().includes(searchData.toLowerCase())
-        );
-        setSearchData(filteredSearchData)
-    }
 
     return (
         <>
@@ -62,22 +66,19 @@ const Cart = () => {
                 <div className='flex gap-2'>
                     <div className='space-x-1'>
                         <input
-                            type="text"
-                            placeholder="Search product..."
-                            value={searchData}
-                            onChange={(ele) => setSearchData(ele.target.value)}
-                            className="border p-2 rounded-lg"
+                            onChange={(e) => { handleSearch(e.target.value) }}
+                            type="text" placeholder="Search product..." className="border p-2 rounded-lg"
                         />
                         <button className='mt-2 bg-gray-300 text-white px-4 py-2 rounded-lg'>Search</button>
                     </div>
-                    <button className='mt-2 bg-gray-300 text-white px-4 py-2 rounded-lg'>Edit</button>
+                    <button onClick={handleDelete} className='mt-2 bg-gray-300 text-white px-4 py-2 rounded-lg'>Edit</button>
                     <button className='mt-2 bg-gray-300 text-white px-4 py-2 rounded-lg'>Delete</button>
                 </div>
                 <button className='mt-2 bg-gray-300 text-white px-4 py-2 rounded-lg'>+ Add Product</button>
             </div>
             <div className='p-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'>
                 {
-                    data.map((ele) => {
+                    cardData.map((ele) => {
                         return (
                             <div key={ele.id} className="flex flex-col items-center justify-center bg-gray-100 p-4 rounded-lg shadow-md">
                                 <input type="checkbox" onChange={() => { handleCheckBoxChange(ele.id) }} checked={selectData.includes(ele.id)} className='mb-3 w-5 h-5 cursor-pointer' />
@@ -88,8 +89,13 @@ const Cart = () => {
                         )
                     })
                 }
-            </div></>
+            </div>
+        </>
     )
 }
 
 export default Cart
+
+
+
+
